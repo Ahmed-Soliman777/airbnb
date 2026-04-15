@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
+import RegisterModal from "@/modals/RegisterModal";
+import LoginModal from "@/modals/LoginModal";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -27,6 +29,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Navbar />
         {children}
+        <RegisterModal />
+        <LoginModal />
       </body>
     </html>
   );
