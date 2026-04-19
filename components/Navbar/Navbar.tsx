@@ -5,14 +5,22 @@ import Logo from './Logo'
 import { LuMenu, LuSearch } from 'react-icons/lu'
 import { useEffect, useRef, useState } from 'react'
 import { useAuthModal } from '@/store/useAuthModalStore'
+import { authClient } from '@/lib/auth-client'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const Navbar = () => {
+
+  // extracting authentication data
+  const { data: session, isPending } = authClient.useSession()
 
   const { openRegister, openLogin } = useAuthModal()
 
   const [openDropDownMenu, setOpenDropDownMenu] = useState<boolean>(false)
 
   const menuRef = useRef<HTMLDivElement | null>(null)
+
+  const router = useRouter()
 
   useEffect(() => {
     // close dropdown menu when user clicks outside of it
@@ -25,6 +33,11 @@ const Navbar = () => {
 
     return () => document.removeEventListener('mousedown', handleMouseClickEvent)
   }, [])
+
+  const handleLogout = async () => {
+    await authClient.signOut()
+    router.refresh()
+  }
 
   return (
     <nav className='fixed top-0 z-50 w-full h-18 lg:h-24 bg-white border-b border-gray-200'>
@@ -62,9 +75,17 @@ const Navbar = () => {
           className="flex items-center gap-4 relative"
           ref={menuRef}
         >
-          <button className="hidden md:block text-sm font-medium px-4 py-2 rounded-full bg-gray-50 cursor-pointer hover:bg-gray-100">
-            Airbnb your home
-          </button>
+
+          {/* Render Airbnb your home when user is logged in */}
+          {session
+            &&
+            !isPending
+            && (
+              <button className="hidden md:block text-sm font-medium px-4 py-2 rounded-full bg-gray-50 cursor-pointer hover:bg-gray-100">
+                Airbnb your home
+              </button>
+            )
+          }
 
           <div className="flex items-center gap-2 border border-gray-300 rounded-full px-2 py-1 hover:shadow-md transition cursor-pointer">
             <button
@@ -74,14 +95,31 @@ const Navbar = () => {
               <LuMenu size={18} />
             </button>
 
-            <div className="relative w-8 h-8 rounded-full overflow-hidden">
-              <Image
-                src={'/image.png'}
-                alt='airbnb-clone-user-avatar'
-                fill
-                className='object-cover'
-              />
-            </div>
+            {/* Redering user image profile */}
+            {session
+              && (
+                <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                  {
+                    session.user.image
+                      ? (
+                        <Image
+                          src={session.user.image}
+                          alt={`${session.user.name} airbnb profile image`}
+                          fill
+                          className='object-cover'
+                        />
+                      ) : (
+                        <Image
+                          src={'/image.png'}
+                          alt='airbnb-clone-user-avatar'
+                          fill
+                          className='object-cover'
+                        />
+                      )
+                  }
+                </div>
+              )
+            }
           </div>
 
           {/* dropdown menu */}
@@ -91,30 +129,74 @@ const Navbar = () => {
             (
               <div className="absolute right-0 top-14 w-56 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden px-4 py-2">
                 <ul className="text-gray-800 text-sm">
-                  <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
-                    Airbnb your home
-                  </li>
+                  {session
+                    &&
+                    !isPending
+                    && (
+                      <>
+                        <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                          Airbnb your home
+                        </li>
+                        <Link href={'/favorites'}>
+                          <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                            Your Favorites
+                          </li>
+                        </Link>
+                        <Link href={'/reservations'}>
+                          <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                            Your Reservations
+                          </li>
+                        </Link>
+                        <Link href={'/properties'}>
+                          <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                            Your Properties
+                          </li>
+                        </Link>
+                        <Link href={'/trips'}>
+                          <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                            Your Trips
+                          </li>
+                        </Link>
+                      </>
+                    )
+                  }
+
+
                   <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
                     Help center
                   </li>
                   <div className="border-t my-1 border-gray-300" />
-                  <li
-                    onClick={() => openRegister()}
-                    className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
-                    Sign up
-                  </li>
-                  <li
-                    onClick={() => openLogin()}
-                    className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
-                    Sign in
-                  </li>
+
+                  {session
+                    ? (
+                      <li
+                        onClick={handleLogout}
+                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                        Logout
+                      </li>
+                    )
+                    : (<>
+                      <li
+                        onClick={() => openRegister()}
+                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                        Sign up
+                      </li>
+                      <li
+                        onClick={() => openLogin()}
+                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                        Sign in
+                      </li>
+                    </>)
+                  }
+
+
                 </ul>
               </div>
             )
           }
         </div>
-      </div>
-    </nav>
+      </div >
+    </nav >
   )
 }
 
