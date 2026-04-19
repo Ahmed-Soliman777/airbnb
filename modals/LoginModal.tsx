@@ -140,6 +140,15 @@ const LoginModal = () => {
         }
     }
 
+    const signInWithGoogle = async () => {
+        try {
+            await authClient.signIn.social({
+                provider: "google",
+            })
+        } catch {
+            toast.error("Google sigin failed")
+        } finally { }
+    }
 
     return (
         <Modal
@@ -198,6 +207,7 @@ const LoginModal = () => {
                 <Button
                     type='button'
                     variant='outline'
+                    onClick={signInWithGoogle}
                     icon={
                         <FcGoogle size={22} />
                     }
