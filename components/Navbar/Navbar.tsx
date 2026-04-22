@@ -8,6 +8,7 @@ import { useAuthModal } from '@/store/useAuthModalStore'
 import { authClient } from '@/lib/auth-client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useCreateListingModal } from '@/store/useCreateModalListing'
 
 const Navbar = () => {
 
@@ -15,6 +16,8 @@ const Navbar = () => {
   const { data: session, isPending } = authClient.useSession()
 
   const { openRegister, openLogin } = useAuthModal()
+
+  const { open: openCreateListing } = useCreateListingModal()
 
   const [openDropDownMenu, setOpenDropDownMenu] = useState<boolean>(false)
 
@@ -81,7 +84,10 @@ const Navbar = () => {
             &&
             !isPending
             && (
-              <button className="hidden md:block text-sm font-medium px-4 py-2 rounded-full bg-gray-50 cursor-pointer hover:bg-gray-100">
+              <button
+                className="hidden md:block text-sm font-medium px-4 py-2 rounded-full bg-gray-50 cursor-pointer hover:bg-gray-100"
+                onClick={openCreateListing}
+              >
                 Airbnb your home
               </button>
             )
@@ -134,7 +140,10 @@ const Navbar = () => {
                     !isPending
                     && (
                       <>
-                        <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+                        <li
+                          className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
+                          onClick={openCreateListing}
+                        >
                           Airbnb your home
                         </li>
                         <Link href={'/favorites'}>
