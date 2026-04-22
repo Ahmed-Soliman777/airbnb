@@ -40,6 +40,7 @@ const Input = ({
         outline-none
         transition
         disabled:opacity-70
+        text-gray-500
         `,
         error
             ? "border-red-500 focus:border-red-500"
