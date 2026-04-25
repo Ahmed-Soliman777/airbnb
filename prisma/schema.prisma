@@ -22,7 +22,7 @@ model Listing {
   guestCount    Int
   bathroomCount Int
   price         Int
-  locationValue Int
+  locationValue String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -66,6 +66,7 @@ model User {
 
   listing     Listing[]
   reservation Reservation[]
+  favoriteIds String[] @default([])
 
   @@unique([email])
   @@map("user")
