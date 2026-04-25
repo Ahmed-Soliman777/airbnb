@@ -102,6 +102,9 @@ const CreateListingModal = () => {
         }
 
         try {
+
+            setLoading(true)
+
             const formData = new FormData()
             formData.append("title", title)
             formData.append("description", description)
@@ -113,7 +116,16 @@ const CreateListingModal = () => {
             formData.append("bathroomCount", bathroomCount.toString())
             formData.append("price", price)
 
-            console.log(Object.fromEntries(formData.entries()))
+            await axios.post("/api/listings", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+
+            toast.success("Listing created successfully")
+
+            handleClose()
+
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 toast.error(error.response?.data?.message || "Something went wrong")
@@ -121,6 +133,20 @@ const CreateListingModal = () => {
         } finally {
             setLoading(false)
         }
+    }
+
+    const handleClose = () => {
+        setCategory("")
+        setPrice("")
+        setTitle("")
+        setDescription("")
+        setImage(null)
+        setLocation(null)
+        setGuestCount(1)
+        setRoomCount(1)
+        setBathroomCount(1)
+        setStep(STEPS.CATEGORY)
+        close()
     }
 
     return (
@@ -263,7 +289,7 @@ const CreateListingModal = () => {
                             min={10}
                             type="number"
                             name="price"
-                            label="Price"
+                            label="Price($)"
                             value={price}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                 setPrice(e.target.value)
@@ -287,6 +313,8 @@ const CreateListingModal = () => {
                 )}
 
                 <Button
+                    loading={loading}
+                    disabled={loading}
                     onClick={() =>
                         step < STEPS.PRICE
                             ? setStep(prev => prev + 1)
