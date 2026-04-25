@@ -1,27 +1,23 @@
+import { Listing } from "@/app/generated/prisma/client"
+import useCounteries from "@/hooks/useCounteries"
 import Image from "next/image"
 import { LuHeart } from "react-icons/lu"
 
-interface Listing {
-    id: number,
-    title: string,
-    location: string,
-    image: string,
-    price: number
-}
-
 const ListingCard = ({ listing }: { listing: Listing }) => {
+    const { getByValue } = useCounteries()
+    const location = getByValue(listing.locationValue)
     return (
         <div className="group cursor-pointer">
             {/* Listing image */}
             <div className="relative aspect-square rounded-xl overflow-hidden">
                 <Image
-                    src={listing.image}
+                    src={listing.imageSrc}
                     alt={listing.title}
                     fill
                     className="object-cover transition group-hover:scale-105"
-                />  
+                />
 
-                <button className="absolute top-3 right-3 p-2 rouneded-full bg-white/90 hover:bg-white shadow">
+                <button className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white shadow">
                     <LuHeart
                         size={18}
                         className="text-gray-700"
@@ -31,7 +27,12 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
 
             <div className="space-y-1 mt-3 text-sm">
                 <p className="text-gray-500 font-medium">
-                    {listing.location}
+                    {
+                        location ?
+                            `${location.region}, ${location.label}`
+                            :
+                            listing.locationValue
+                    }
                 </p>
                 <p className="text-gray-900 truncate">
                     {listing.title}
