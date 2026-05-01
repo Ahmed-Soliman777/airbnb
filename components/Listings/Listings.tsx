@@ -11,10 +11,10 @@ const Listings = async ({ searchParams }: HomeProps) => {
     const currentUser = await getCurrentUser()
 
     const listings = await getListings({
-        category: params?.category,
-        locationValue: params?.locationValue,
-        minPrice: params?.minPrice ? Number(params?.minPrice) : undefined,
-        maxPrice: params?.maxPrice ? Number(params?.maxPrice) : undefined
+        category: params.category,
+        locationValue: params.locationValue,
+        minPrice: params.minPrice ? Number(params.minPrice) : undefined,
+        maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined
     })
 
     return (
@@ -24,6 +24,7 @@ const Listings = async ({ searchParams }: HomeProps) => {
                     <ListingCard
                         key={listing.id}
                         listing={listing}
+                        currentUser = {currentUser}
                     />
                 )
             })}
