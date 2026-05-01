@@ -1,9 +1,20 @@
 import { Listing } from "@/app/generated/prisma/client"
 import useCounteries from "@/hooks/useCounteries"
 import Image from "next/image"
-import { LuHeart } from "react-icons/lu"
+import HeartButton from "../Favorites/HeartButton"
 
-const ListingCard = ({ listing }: { listing: Listing }) => {
+interface ListingCardProps {
+    listing: Listing,
+    currentUser?: {
+        id: string,
+        favoriteIds: string[]
+    } | null
+
+    hideFavoriteButton?: boolean,
+    property?: boolean
+}
+
+const ListingCard = ({ listing, currentUser, hideFavoriteButton, property }: ListingCardProps) => {
     const { getByValue } = useCounteries()
     const location = getByValue(listing.locationValue)
     return (
@@ -17,12 +28,11 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
                     className="object-cover transition group-hover:scale-105"
                 />
 
-                <button className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white shadow">
-                    <LuHeart
-                        size={18}
-                        className="text-gray-700"
-                    />
-                </button>
+                {!hideFavoriteButton && (
+                    <HeartButton
+                        listingId={listing.id}
+                        currentUser={currentUser}
+                    />)}
             </div>
 
             <div className="space-y-1 mt-3 text-sm">
@@ -45,6 +55,14 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
                         night
                     </span>
                 </p>
+
+                {property && (
+                    <div className="mt-3">
+                        <p className="text-sm text-gray-500">
+                            Listed on {new Date(listing.createdAt).toLocaleDateString()}
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     )
