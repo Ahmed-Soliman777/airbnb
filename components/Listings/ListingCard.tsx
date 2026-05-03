@@ -1,7 +1,9 @@
+"use client"
 import { Listing } from "@/app/generated/prisma/client"
 import useCounteries from "@/hooks/useCounteries"
 import Image from "next/image"
 import HeartButton from "../Favorites/HeartButton"
+import { useRouter } from "next/navigation"
 
 interface ListingCardProps {
     listing: Listing,
@@ -17,8 +19,12 @@ interface ListingCardProps {
 const ListingCard = ({ listing, currentUser, hideFavoriteButton, property }: ListingCardProps) => {
     const { getByValue } = useCounteries()
     const location = getByValue(listing.locationValue)
+    const router = useRouter()
     return (
-        <div className="group cursor-pointer">
+        <div
+            className="group cursor-pointer"
+            onClick={() => router.push(`/listings/${listing.id}`)}
+        >
             {/* Listing image */}
             <div className="relative aspect-square rounded-xl overflow-hidden">
                 <Image
