@@ -30,6 +30,8 @@ model Listing {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  reservations Reservation[]
+
   @@index([userId])
   @@index([locationValue])
   @@index([category])
@@ -46,10 +48,11 @@ model Reservation {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  lisitingId String
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([lisitingId])
+  @@index([listingId])
   @@map("reservation")
 }
 
@@ -66,7 +69,7 @@ model User {
 
   listing     Listing[]
   reservation Reservation[]
-  favoriteIds String[] @default([])
+  favoriteIds String[]      @default([])
 
   @@unique([email])
   @@map("user")
