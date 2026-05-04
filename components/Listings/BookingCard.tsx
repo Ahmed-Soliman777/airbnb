@@ -77,6 +77,7 @@ const BookingCard = ({
       })
       toast.success("Reservation successful!")
       route.refresh()
+      route.push("/trips")
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.error)
@@ -92,7 +93,7 @@ const BookingCard = ({
         {/* price */}
         <div className="flex items-center gap-2 mb-6">
           <p className="text-xl font-bold">
-            ${pricePerNight}
+            ${pricePerNight + " "}
             <span className="text-lg text-gray-600">night</span>
           </p>
         </div>
