@@ -1,9 +1,11 @@
 "use client"
-import { Listing } from "@/app/generated/prisma/client"
 import useCounteries from "@/hooks/useCounteries"
 import Image from "next/image"
 import HeartButton from "../Favorites/HeartButton"
 import { useRouter } from "next/navigation"
+import { Listing } from "@/types/listing"
+import { format } from "date-fns"
+import CancelReservationButton from "../Reservations/CancelReservationButton"
 
 interface ListingCardProps {
     listing: Listing,
@@ -14,9 +16,18 @@ interface ListingCardProps {
 
     hideFavoriteButton?: boolean,
     property?: boolean
+    reservation?: {
+        id: string,
+        startDate: string,
+        endDate: string,
+        totalPrice: number
+    }
+
+    trip?: boolean
+    actionLabel?: string
 }
 
-const ListingCard = ({ listing, currentUser, hideFavoriteButton, property }: ListingCardProps) => {
+const ListingCard = ({ listing, currentUser, hideFavoriteButton, property, reservation, trip, actionLabel }: ListingCardProps) => {
     const { getByValue } = useCounteries()
     const location = getByValue(listing.locationValue)
     const router = useRouter()
@@ -53,24 +64,48 @@ const ListingCard = ({ listing, currentUser, hideFavoriteButton, property }: Lis
                 <p className="text-gray-900 truncate">
                     {listing.title}
                 </p>
-                <p className="pt-1">
-                    <span className="font-semibold text-gray-900">
-                        ${listing.price}
-                    </span> /
-                    <span className="text-gray-500">
-                        night
-                    </span>
-                </p>
 
-                {property && (
-                    <div className="mt-3">
-                        <p className="text-sm text-gray-500">
-                            Listed on {new Date(listing.createdAt).toLocaleDateString()}
-                        </p>
-                    </div>
-                )}
+                {
+                    reservation ?
+                        (<>
+                            <p className="text-gray-500 text-sm">
+                                {format(new Date(reservation.startDate), "MMM d")} - {" "}
+                                {format(new Date(reservation.endDate), "MMM d")} - {" "}
+                            </p>
+                            <p className="pt-1 font-semibold text-gray-900">
+                                {reservation.totalPrice}
+                            </p>
+                        </>)
+                        : (<p className="pt-1">
+                            <span className="font-semibold text-gray-900">
+                                ${listing.price}
+                            </span> /
+                            <span className="text-gray-500">
+                                night
+                            </span>
+                        </p>)
+                }
+
+                {
+                    property && (
+                        <div className="mt-3">
+                            <p className="text-sm text-gray-500">
+                                Listed on {new Date(listing.createdAt).toLocaleDateString()}
+                            </p>
+                        </div>
+                    )
+                }
+
+                {
+                    trip && reservation && actionLabel && (
+                        <CancelReservationButton
+                            actionLabel={actionLabel}
+                            reservationId={reservation.id}
+                        />
+                    )
+                }
             </div>
-        </div>
+        </div >
     )
 }
 
