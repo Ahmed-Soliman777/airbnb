@@ -1,8 +1,17 @@
-import { HomeProps } from '@/app/page'
 import { getCurrentUser } from '@/server-actions/getCurrentUser'
 import { getListings } from '@/services/listings'
 import { Listing } from '@/app/generated/prisma/client'
 import ListingCard from './ListingCard'
+import EmptyListings from '../ui/EmptyListings'
+
+interface HomeProps {
+    searchParams: {
+        category?: string;
+        locationValue?: string;
+        minPrice?: number;
+        maxPrice?: number;
+    }
+}
 
 const Listings = async ({ searchParams }: HomeProps) => {
 
@@ -17,6 +26,16 @@ const Listings = async ({ searchParams }: HomeProps) => {
         maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined
     })
 
+    if (listings.length === 0) {
+        return (
+            <EmptyListings
+                title="No listings found"
+                subtitle='We could not find any listings that match your search criteria. Try adjusting your filters or search again with different keywords.'
+                filter
+            />
+        )
+    }
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {listings.map((listing: Listing) => {
@@ -24,7 +43,7 @@ const Listings = async ({ searchParams }: HomeProps) => {
                     <ListingCard
                         key={listing.id}
                         listing={listing}
-                        currentUser = {currentUser}
+                        currentUser={currentUser}
                     />
                 )
             })}
