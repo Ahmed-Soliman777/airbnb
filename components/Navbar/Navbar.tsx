@@ -9,6 +9,7 @@ import { authClient } from '@/lib/auth-client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCreateListingModal } from '@/store/useCreateModalListing'
+import { useFilterModal } from '@/store/useFilterListingModal'
 
 const Navbar = () => {
 
@@ -18,6 +19,8 @@ const Navbar = () => {
   const { openRegister, openLogin } = useAuthModal()
 
   const { open: openCreateListing } = useCreateListingModal()
+
+  const { open: openFilterModal } = useFilterModal()
 
   const [openDropDownMenu, setOpenDropDownMenu] = useState<boolean>(false)
 
@@ -50,7 +53,9 @@ const Navbar = () => {
         <Logo />
 
         {/* navbar navgation */}
-        <div className="flex items-center gap-3 px-4 py-2 shadow-md border border-gray-200 rounded-full cursor-pointer">
+        <div
+          onClick={openFilterModal}
+          className="flex items-center gap-3 px-4 py-2 shadow-md border border-gray-200 rounded-full cursor-pointer">
           <span className='text-sm font-medium text-gray-700 flex items-center gap-2'>
             <Image
               src={'/home.png'}
