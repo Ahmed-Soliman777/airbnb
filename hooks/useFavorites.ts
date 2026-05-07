@@ -28,7 +28,7 @@ export function useFavorite({ currentUser, listingId }: useFavoriteProps) {
         await axios.post(`/api/favorites/${listingId}`);
       }
       route.refresh();
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong!");
     }
   };
