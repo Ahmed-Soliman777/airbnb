@@ -1,4 +1,5 @@
 import ListingPage from '@/components/Listings/ListingPage'
+import ListingViewSkeleton from '@/components/Skeletons/ListingViewSkeleton'
 import { Suspense } from 'react'
 
 const page = async ({
@@ -8,8 +9,8 @@ const page = async ({
 }) => {
     const listingId = (await params).listingId
     return (
-        <Suspense fallback={<p>Loading...</p>}>
-            <ListingPage 
+        <Suspense fallback={<ListingViewSkeleton />}>
+            <ListingPage
                 listingId={listingId && listingId}
             />
         </Suspense>
