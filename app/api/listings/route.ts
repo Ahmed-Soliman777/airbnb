@@ -77,7 +77,7 @@ export async function GET(req: Request) {
     const category = searchParams.get("category");
     const locationValue = searchParams.get("locationValue");
     const minPrice = searchParams.get("minPrice");
-    const maxPrice = searchParams.get("category");
+    const maxPrice = searchParams.get("maxPrice");
 
     const listings = await prisma.listing.findMany({
       where: {
